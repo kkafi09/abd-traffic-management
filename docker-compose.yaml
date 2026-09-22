@@ -1,0 +1,80 @@
+x-airflow-common: &airflow-common
+  image: iqdamshidqi/airflow-pyspark:2.8.1
+  environment:
+    - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    - AIRFLOW__CORE__DEFAULT_TIMEZONE=Asia/Jakarta
+    - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+    - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-meta-db/airflow
+    - AIRFLOW__WEBSERVER__SECRET_KEY=secret_key_airflow_prak_abd_2026
+    - AIRFLOW_CONN_POSTGRES_TRAFFIC_CONN=postgresql://de_user:password123@target-postgres:5432/bank_warehouse
+    - AIRFLOW_CONN_POSTGRES_FRAUD_CONN=postgresql://de_user:password123@target-postgres:5432/bank_warehouse
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./scripts:/opt/airflow/scripts
+    - ./data:/opt/airflow/data
+    - ./sql:/opt/airflow/sql
+    - ./logs:/opt/airflow/logs
+  depends_on:
+    airflow-meta-db:
+      condition: service_healthy
+
+services:
+  target-postgres:
+    image: postgres:15-alpine
+    container_name: target-postgres
+    environment:
+      POSTGRES_USER: de_user
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: bank_warehouse
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_fraud_warehouse:/var/lib/postgresql/data
+
+  airflow-meta-db:
+    image: postgres:15-alpine
+    container_name: airflow-meta-db
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - airflow_metadata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+
+  airflow-init:
+    <<: *airflow-common
+    container_name: airflow-init
+    command: >
+      bash -c "
+      airflow db migrate &&
+      airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com
+      "
+
+  airflow-webserver:
+    <<: *airflow-common
+    container_name: airflow-webserver
+    command: airflow webserver
+    ports:
+      - "8081:8080"
+    restart: always
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-scheduler:
+    <<: *airflow-common
+    container_name: airflow-scheduler
+    command: airflow scheduler
+    restart: always
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_fraud_warehouse:
+  airflow_metadata:

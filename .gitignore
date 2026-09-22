@@ -1,0 +1,36 @@
+# airflow logs
+logs/
+*.log
+
+# python cache and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+*.env
+
+# spark & java artifacts
+.ivy2/
+metastore_db/
+derby.log
+spark-warehouse/
+*.jar
+
+# datasets & raw files
+data/
+*.csv
+*.xlsx
+
+# temporary data files
+*.tmp
+*.temp
+
+
+# ide & os files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
