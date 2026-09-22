@@ -33,6 +33,6 @@ Pipeline Batch ETL berbasis **Apache Airflow**, **PySpark**, dan **PostgreSQL** 
 
 - Host: `localhost`
 - Port: `5433`
-- Database: `bank_warehouse`
+- Database: `traffic_warehouse`
 - User / Password: `de_user` / `password123`
 - Tabel Utama: `daily_traffic_summary`

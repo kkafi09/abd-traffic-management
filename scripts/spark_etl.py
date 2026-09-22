@@ -59,7 +59,7 @@ def run_traffic_etl():
         ) \
         .withColumn("batch_id", concat(lit("BATCH_"), date_format(col("traffic_date"), "yyyyMMdd")))
 
-    jdbc_url = "jdbc:postgresql://target-postgres:5432/bank_warehouse"
+    jdbc_url = "jdbc:postgresql://target-postgres:5432/traffic_warehouse"
     db_properties = {
         "user": "de_user",
         "password": "password123",

@@ -6,8 +6,7 @@ x-airflow-common: &airflow-common
     - AIRFLOW__CORE__EXECUTOR=LocalExecutor
     - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-meta-db/airflow
     - AIRFLOW__WEBSERVER__SECRET_KEY=secret_key_airflow_prak_abd_2026
-    - AIRFLOW_CONN_POSTGRES_TRAFFIC_CONN=postgresql://de_user:password123@target-postgres:5432/bank_warehouse
-    - AIRFLOW_CONN_POSTGRES_FRAUD_CONN=postgresql://de_user:password123@target-postgres:5432/bank_warehouse
+    - AIRFLOW_CONN_POSTGRES_TRAFFIC_CONN=postgresql://de_user:password123@target-postgres:5432/traffic_warehouse
   volumes:
     - ./dags:/opt/airflow/dags
     - ./scripts:/opt/airflow/scripts
@@ -25,12 +24,12 @@ services:
     environment:
       POSTGRES_USER: de_user
       POSTGRES_PASSWORD: password123
-      POSTGRES_DB: bank_warehouse
+      POSTGRES_DB: traffic_warehouse
     ports:
       - "5433:5432"
     volumes:
       - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - postgres_fraud_warehouse:/var/lib/postgresql/data
+      - postgres_traffic_warehouse:/var/lib/postgresql/data
 
   airflow-meta-db:
     image: postgres:15-alpine
@@ -76,5 +75,5 @@ services:
         condition: service_completed_successfully
 
 volumes:
-  postgres_fraud_warehouse:
+  postgres_traffic_warehouse:
   airflow_metadata:
