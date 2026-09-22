@@ -1,6 +1,6 @@
 # Surabaya Traffic Batch ETL Pipeline
 
-Pipeline Batch ETL berbasis **Apache Airflow**, **PySpark**, dan **PostgreSQL** untuk memproses dan mengagregasi data kondisi lalu lintas Kota Surabaya ke Data Warehouse (Praktikum ABD Week 3).
+Pipeline Batch ETL berbasis **Apache Airflow**, **PySpark**, dan **PostgreSQL** untuk memproses dan mengagregasi data kondisi lalu lintas Kota Surabaya ke Data Warehouse.
 
 ---
 
