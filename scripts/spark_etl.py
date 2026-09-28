@@ -66,10 +66,22 @@ def run_traffic_etl():
         "driver": "org.postgresql.Driver"
     }
 
-    # simpan hasil agregasi ke tabel staging postgresql
+    # simpan master data road_segments ke schema dwh
+    df_roads_clean = df_roads.select(
+        "segment_id", "road_code", "road_name", "segment_order",
+        "start_lat", "start_lon", "end_lat", "end_lon", "length_m", "point_count"
+    )
+    df_roads_clean.write.jdbc(
+        url=jdbc_url,
+        table="dwh.road_segments",
+        mode="overwrite",
+        properties={**db_properties, "truncate": "true"}
+    )
+
+    # simpan hasil agregasi ke schema staging
     df_summary.write.jdbc(
         url=jdbc_url,
-        table="staging_traffic_summary",
+        table="staging.traffic_summary",
         mode="overwrite",
         properties=db_properties
     )

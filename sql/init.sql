@@ -1,4 +1,8 @@
-CREATE TABLE IF NOT EXISTS road_segments (
+-- inisialisasi schema staging dan dwh
+CREATE SCHEMA IF NOT EXISTS staging;
+CREATE SCHEMA IF NOT EXISTS dwh;
+
+CREATE TABLE IF NOT EXISTS dwh.road_segments (
     segment_id VARCHAR(50) PRIMARY KEY,
     road_code VARCHAR(50),
     road_name VARCHAR(150),
@@ -11,7 +15,7 @@ CREATE TABLE IF NOT EXISTS road_segments (
     point_count INT
 );
 
-CREATE TABLE IF NOT EXISTS daily_traffic_summary (
+CREATE TABLE IF NOT EXISTS dwh.daily_traffic_summary (
     traffic_date DATE NOT NULL,
     segment_id VARCHAR(50) NOT NULL,
     road_name VARCHAR(150) NOT NULL,
@@ -25,4 +29,4 @@ CREATE TABLE IF NOT EXISTS daily_traffic_summary (
     PRIMARY KEY (traffic_date, segment_id, condition)
 );
 
-ALTER TABLE daily_traffic_summary ADD COLUMN IF NOT EXISTS batch_id VARCHAR(50);
+ALTER TABLE dwh.daily_traffic_summary ADD COLUMN IF NOT EXISTS batch_id VARCHAR(50);

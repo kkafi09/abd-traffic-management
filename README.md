@@ -11,7 +11,7 @@ Pipeline Batch ETL berbasis **Apache Airflow**, **PySpark**, dan **PostgreSQL** 
    - Menggabungkan data dengan nama segmen jalan (left join).
    - Menghasilkan metadata `batch_id` secara programatik di PySpark (`BATCH_YYYYMMDD_000`, dst.).
    - Menghitung ringkasan harian (total records, rata-rata kecepatan, total volume kendaraan, okupansi, dan indeks kemacetan).
-3. **Load**: Menulis ke tabel staging, kemudian melakukan idempotent upsert ke tabel `daily_traffic_summary` di PostgreSQL.
+3. **Load**: Menulis ke tabel perantara `staging.traffic_summary`, kemudian melakukan idempotent upsert ke tabel Data Warehouse `dwh.daily_traffic_summary` serta menyimpan master `dwh.road_segments` di PostgreSQL.
 
 ---
 
@@ -35,4 +35,5 @@ Pipeline Batch ETL berbasis **Apache Airflow**, **PySpark**, dan **PostgreSQL** 
 - Port: `5433`
 - Database: `traffic_warehouse`
 - User / Password: `de_user` / `password123`
-- Tabel Utama: `daily_traffic_summary`
+- Schema Staging: `staging.traffic_summary`
+- Schema DWH (Tabel Utama): `dwh.road_segments`, `dwh.daily_traffic_summary`

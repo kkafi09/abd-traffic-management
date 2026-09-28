@@ -24,7 +24,23 @@ with DAG(
         task_id='init_traffic_warehouse_schema',
         postgres_conn_id='postgres_traffic_conn',
         sql="""
-            CREATE TABLE IF NOT EXISTS daily_traffic_summary (
+            CREATE SCHEMA IF NOT EXISTS staging;
+            CREATE SCHEMA IF NOT EXISTS dwh;
+
+            CREATE TABLE IF NOT EXISTS dwh.road_segments (
+                segment_id VARCHAR(50) PRIMARY KEY,
+                road_code VARCHAR(50),
+                road_name VARCHAR(150),
+                segment_order INT,
+                start_lat NUMERIC(10, 6),
+                start_lon NUMERIC(10, 6),
+                end_lat NUMERIC(10, 6),
+                end_lon NUMERIC(10, 6),
+                length_m INT,
+                point_count INT
+            );
+
+            CREATE TABLE IF NOT EXISTS dwh.daily_traffic_summary (
                 traffic_date DATE NOT NULL,
                 segment_id VARCHAR(50) NOT NULL,
                 road_name VARCHAR(150) NOT NULL,
@@ -37,7 +53,7 @@ with DAG(
                 avg_congestion_index NUMERIC(5, 2) NOT NULL,
                 PRIMARY KEY (traffic_date, segment_id, condition)
             );
-            ALTER TABLE daily_traffic_summary ADD COLUMN IF NOT EXISTS batch_id VARCHAR(50);
+            ALTER TABLE dwh.daily_traffic_summary ADD COLUMN IF NOT EXISTS batch_id VARCHAR(50);
         """
     )
 
@@ -50,7 +66,7 @@ with DAG(
         task_id='upsert_to_traffic_warehouse',
         postgres_conn_id='postgres_traffic_conn',
         sql="""
-            INSERT INTO daily_traffic_summary (
+            INSERT INTO dwh.daily_traffic_summary (
                 traffic_date,
                 segment_id,
                 road_name,
@@ -73,7 +89,7 @@ with DAG(
                 total_volume_vehicles,
                 avg_occupancy_pct,
                 avg_congestion_index
-            FROM staging_traffic_summary
+            FROM staging.traffic_summary
             ON CONFLICT (traffic_date, segment_id, condition)
             DO UPDATE SET
                 road_name = EXCLUDED.road_name,
