@@ -1,0 +1,30 @@
+# documentation & guide notes
+docs/
+
+# datasets & raw files (folder data tetap masuk dengan .gitkeep)
+data/*
+!data/.gitkeep
+*.csv
+*.xlsx
+
+# python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+*.env
+
+# logs & temporary files
+logs/
+*.log
+*.tmp
+*.temp
+
+# ide & os files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
